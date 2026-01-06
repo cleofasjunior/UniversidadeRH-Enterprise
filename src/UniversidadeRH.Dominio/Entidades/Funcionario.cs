@@ -10,7 +10,9 @@ namespace UniversidadeRH.Dominio.Entidades
         public string Email { get; private set; }
         public string Cpf { get; private set; } 
         public string Departamento { get; private set; }
+        
         public TipoFuncionario Tipo { get; private set; }
+        
         public string? LinkLattes { get; private set; }
         public DateTime DataAdmissao { get; private set; }
         public bool Ativo { get; private set; }
@@ -40,7 +42,7 @@ namespace UniversidadeRH.Dominio.Entidades
             Departamento = null!;
         }
 
-        // Construtor principal utilizado pelo Service
+        // Construtor principal
         public Funcionario(string nome, string email, string cpf, string departamento, TipoFuncionario tipo, string? linkLattes)
         {
             Id = Guid.NewGuid();
@@ -53,6 +55,11 @@ namespace UniversidadeRH.Dominio.Entidades
             DataAdmissao = DateTime.UtcNow; 
             Ativo = true;
             
+            // Inicialização redundante mas segura
+            Avaliacoes = new List<AvaliacaoDesempenho>();
+            Treinamentos = new List<FuncionarioTreinamento>();
+            AtividadesAcademicas = new List<AtividadeAcademica>();
+            
             if (tipo == TipoFuncionario.Professor) NivelCarreira = Enums.NivelCarreira.Auxiliar;
             if (tipo == TipoFuncionario.TecnicoAdministrativo) NivelTecnico = Enums.NivelTecnico.Nivel_I;
         }
@@ -60,8 +67,6 @@ namespace UniversidadeRH.Dominio.Entidades
         // =================================================================
         // MÉTODOS DE NEGÓCIO
         // =================================================================
-
-        // === MÉTODOS DE CONFIGURAÇÃO (Chamados pelo Service) ===
 
         public void DefinirRegime(RegimeTrabalho regime)
         {
@@ -72,8 +77,6 @@ namespace UniversidadeRH.Dominio.Entidades
         {
             DataAdmissao = data;
         }
-
-        // =====================================================
 
         public void AdicionarBeneficio(Beneficio beneficio)
         {
@@ -94,12 +97,15 @@ namespace UniversidadeRH.Dominio.Entidades
             Avaliacoes.Add(avaliacao);
         }
 
+        // Método Original (exige motivo, como deve ser)
         public void AdicionarTreinamento(Treinamento treinamento, string motivo)
         {
             Treinamentos.Add(new FuncionarioTreinamento(this.Id, treinamento.Id, motivo));
         }
 
-       public void AdicionarAtividadeAcademica(AtividadeAcademica atividade)
+       
+        
+        public void AdicionarAtividadeAcademica(AtividadeAcademica atividade)
         {
             if (Tipo != TipoFuncionario.Professor)
                 throw new DomainException("Apenas professores possuem Atividades Acadêmicas.");
@@ -108,21 +114,20 @@ namespace UniversidadeRH.Dominio.Entidades
 
             var totalHoras = AtividadesAcademicas.Sum(a => a.HorasSemanais) + atividade.HorasSemanais;
 
-            
             int limite = (int)Regime switch
             {
                 1 => 20, // 20 Horas
                 2 => 40, // 40 Horas
-                3 => 40, // Dedicação Exclusiva (também é 40h de teto para atividades)
-                _ => 20  // Padrão de segurança
+                3 => 40, // Dedicação Exclusiva
+                _ => 20 
             };
-            // =====================
 
             if (totalHoras > limite)
                 throw new DomainException($"A atividade excede o limite de horas do regime ({limite}h).");
 
             AtividadesAcademicas.Add(atividade);
         }
+
         public void AdicionarPontosCarreira(int pontos, string motivo)
         {
             PontosCarreira += pontos;
@@ -148,7 +153,7 @@ namespace UniversidadeRH.Dominio.Entidades
                 {
                     if (Avaliacoes.Any() && Avaliacoes.Average(a => a.Nota) >= 7.0m)
                     {
-                       SubirNivelTecnico();
+                        SubirNivelTecnico();
                     }
                 }
             }

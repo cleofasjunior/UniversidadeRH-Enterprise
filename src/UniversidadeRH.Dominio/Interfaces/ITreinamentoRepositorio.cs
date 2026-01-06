@@ -1,21 +1,21 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UniversidadeRH.Dominio.Entidades;
-using UniversidadeRH.Dominio.Enums; 
+using UniversidadeRH.Dominio.Entidades; 
+using UniversidadeRH.Dominio.Enums;
 
 namespace UniversidadeRH.Dominio.Interfaces
 {
     public interface ITreinamentoRepositorio
     {
-        // Métodos que estavam faltando:
+        // CRUD Básico
         Task AdicionarAsync(Treinamento treinamento);
-        Task<List<Treinamento>> ListarTodosAsync();
+        
+        // Padronizamos este nome (usado nos testes e no repositório):
+        Task<List<Treinamento>> ObterTodosAsync();
 
-        // Métodos que provavelmente já existiam (mantenha-os):
+        // Métodos Específicos
         Task<List<FuncionarioTreinamento>> ObterPendentesPorFuncionarioAsync(Guid funcionarioId);
         
-        // Se houver outros métodos antigos como ListarPorNivelETipoAsync, mantenha-os aqui também.
         Task<List<Treinamento>> ListarPorNivelETipoAsync(int nivel, TipoFuncionario tipo);
     }
 }

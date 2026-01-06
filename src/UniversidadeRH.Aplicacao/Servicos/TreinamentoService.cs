@@ -1,4 +1,4 @@
-using UniversidadeRH.Aplicacao.Dtos;
+using UniversidadeRH.Aplicacao.DTOs;
 using UniversidadeRH.Aplicacao.Interfaces;
 using UniversidadeRH.Dominio.Entidades;
 using UniversidadeRH.Dominio.Interfaces;
@@ -19,8 +19,6 @@ namespace UniversidadeRH.Aplicacao.Servicos
 
         public async Task CriarCursoAsync(string descricao, int nivel, int tipoFuncionario, int cargaHoraria)
         {
-          
-            
             var curso = new Treinamento(
                 descricao, 
                 (NivelTreinamento)nivel,          
@@ -33,33 +31,33 @@ namespace UniversidadeRH.Aplicacao.Servicos
 
         public async Task<List<Treinamento>> ListarTodosCursosAsync()
         {
-            return await _treinamentoRepo.ListarTodosAsync();
+            return await _treinamentoRepo.ObterTodosAsync();
         }
 
-        public async Task RegistrarAvaliacaoDesempenhoAsync(RegistrarAvaliacaoDto dto)
+        public async Task<Funcionario> RegistrarAvaliacao(RegistrarAvaliacaoDto dto)
         {
-            var funcionario = await _funcionarioRepo.ObterPorIdComAvaliacoesAsync(dto.FuncionarioId);
+            var funcionario = await _funcionarioRepo.ObterPorIdAsync(dto.FuncionarioId);
             
             if (funcionario == null) throw new Exception("Funcionário não encontrado.");
 
-            var novaAvaliacao = new AvaliacaoDesempenho(dto.FuncionarioId, (decimal)dto.Nota, dto.Feedback);
+            var novaAvaliacao = new AvaliacaoDesempenho(dto.FuncionarioId, dto.Nota, dto.Feedback);
+            
+            // Apenas adiciona a avaliação. NADA DE SUGESTÃO AUTOMÁTICA.
+            funcionario.AdicionarAvaliacao(novaAvaliacao);
 
-            funcionario.Avaliacoes?.Add(novaAvaliacao);
-
-            await _funcionarioRepo.AtualizarAsync(funcionario);
+           
+            return funcionario;
         }
 
         public async Task<List<AvaliacaoResumoDto>> ListarAvaliacoesPorFuncionarioAsync(Guid funcionarioId)
         {
-            // 1. Usa o Repositório para buscar funcionário JÁ COM as avaliações (Include)
-            var funcionario = await _funcionarioRepo.ObterPorIdComAvaliacoesAsync(funcionarioId);
+            var funcionario = await _funcionarioRepo.ObterPorIdAsync(funcionarioId);
             
-            if (funcionario == null || funcionario.Avaliacoes == null) 
+            if (funcionario == null || !funcionario.Avaliacoes.Any()) 
                 return new List<AvaliacaoResumoDto>();
 
-            // 2. Transforma (Mapeia) a Entidade para o DTO
             var listaDtos = funcionario.Avaliacoes
-                .OrderByDescending(a => a.DataAvaliacao) // Mostra as mais recentes primeiro
+                .OrderByDescending(a => a.DataAvaliacao)
                 .Select(a => new AvaliacaoResumoDto
                 {
                     Id = a.Id,
@@ -71,5 +69,5 @@ namespace UniversidadeRH.Aplicacao.Servicos
 
             return listaDtos;
         }
-    } // Fim da classe
+    } 
 }

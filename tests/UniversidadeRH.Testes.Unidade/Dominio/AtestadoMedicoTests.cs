@@ -1,3 +1,4 @@
+using System;
 using FluentAssertions;
 using UniversidadeRH.Dominio.Entidades;
 using UniversidadeRH.Dominio.Excecoes;

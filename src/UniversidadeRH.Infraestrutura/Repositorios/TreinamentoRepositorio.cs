@@ -21,7 +21,8 @@ namespace UniversidadeRH.Infraestrutura.Repositorios
             await _context.SaveChangesAsync();
         }
 
-        public async Task<List<Treinamento>> ListarTodosAsync()
+        
+        public async Task<List<Treinamento>> ObterTodosAsync()
         {
             return await _context.Treinamentos.AsNoTracking().ToListAsync();
         }

@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using UniversidadeRH.Aplicacao.Dtos; 
+using UniversidadeRH.Aplicacao.DTOs; 
 using UniversidadeRH.Aplicacao.Interfaces;
 using UniversidadeRH.Dominio.Enums; 
 
@@ -24,7 +24,6 @@ namespace UniversidadeRH.API.Controllers
         [HttpPost("criar-curso")]
         public async Task<IActionResult> CriarCurso([FromBody] CriarCursoDto dto)
         {
-           
             await _service.CriarCursoAsync(
                 dto.Descricao, 
                 (int)dto.Nivel,            
@@ -57,10 +56,14 @@ namespace UniversidadeRH.API.Controllers
                 return BadRequest(resultadoValidacao.Errors);
             }
 
-            // Execução da Lógica Simplificada
-            await _service.RegistrarAvaliacaoDesempenhoAsync(dto);
             
-            return Ok(new { mensagem = "Avaliação registrada com sucesso." });
+            var funcionarioAtualizado = await _service.RegistrarAvaliacao(dto);
+            
+            return Ok(new { 
+                mensagem = "Avaliação registrada com sucesso.", 
+                funcionario = funcionarioAtualizado.Nome,
+                novaNota = dto.Nota
+            });
         }
 
         // --- PASSO 4: LISTAR AVALIAÇÕES ---

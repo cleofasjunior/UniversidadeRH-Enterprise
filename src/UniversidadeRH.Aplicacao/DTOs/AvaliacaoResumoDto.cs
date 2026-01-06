@@ -1,4 +1,4 @@
-namespace UniversidadeRH.Aplicacao.Dtos
+namespace UniversidadeRH.Aplicacao.DTOs
 {
     public class AvaliacaoResumoDto
     {

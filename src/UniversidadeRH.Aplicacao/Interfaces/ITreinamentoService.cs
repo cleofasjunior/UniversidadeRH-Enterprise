@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UniversidadeRH.Aplicacao.Dtos;
+using UniversidadeRH.Aplicacao.DTOs;
 using UniversidadeRH.Dominio.Entidades;
 
 namespace UniversidadeRH.Aplicacao.Interfaces
@@ -15,7 +15,7 @@ namespace UniversidadeRH.Aplicacao.Interfaces
         Task<List<Treinamento>> ListarTodosCursosAsync();
 
         // 3. Avaliar (Assinatura atualizada para usar o DTO)
-        Task RegistrarAvaliacaoDesempenhoAsync(RegistrarAvaliacaoDto dto);
+        Task<Funcionario> RegistrarAvaliacao(RegistrarAvaliacaoDto dto);
 
         // 4. Listar Avaliações
         Task<List<AvaliacaoResumoDto>> ListarAvaliacoesPorFuncionarioAsync(Guid funcionarioId);

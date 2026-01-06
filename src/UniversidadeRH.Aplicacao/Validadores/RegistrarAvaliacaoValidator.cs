@@ -1,5 +1,5 @@
 using FluentValidation;
-using UniversidadeRH.Aplicacao.Dtos;
+using UniversidadeRH.Aplicacao.DTOs;
 
 namespace UniversidadeRH.Aplicacao.Validadores
 {

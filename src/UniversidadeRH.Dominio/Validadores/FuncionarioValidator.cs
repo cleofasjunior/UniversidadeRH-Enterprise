@@ -8,27 +8,28 @@ public class FuncionarioValidator : AbstractValidator<Funcionario>
 {
     public FuncionarioValidator()
     {
+        // 1. Nome
         RuleFor(x => x.Nome)
             .NotEmpty().WithMessage("O nome é obrigatório.")
             .Length(3, 100).WithMessage("O nome deve ter entre 3 e 100 caracteres.");
 
+        // 2. Email
         RuleFor(x => x.Email)
-            .NotEmpty().WithMessage("O e-mail é obrigatório.")
-            .EmailAddress().WithMessage("E-mail inválido.");
+            .NotEmpty().WithMessage("O email é obrigatório.")
+            .EmailAddress().WithMessage("O email fornecido não é válido.");
 
+        // 3. Departamento
         RuleFor(x => x.Departamento)
             .NotEmpty().WithMessage("O departamento é obrigatório.");
 
-        // A REGRA DE NEGÓCIO CRÍTICA
+        // 4. CPF
+        RuleFor(x => x.Cpf)
+            .NotEmpty().WithMessage("CPF é obrigatório.");
+
+        // 5. Lattes (Regra condicional corrigida para usar .Tipo)
         RuleFor(x => x.LinkLattes)
             .NotEmpty()
             .When(x => x.Tipo == TipoFuncionario.Professor)
-            .WithMessage("O Link do Lattes é obrigatório para Professores.");
-            
-        // Regra Extra: Validação simples de URL se o campo não for vazio
-        RuleFor(x => x.LinkLattes)
-            .Must(uri => Uri.TryCreate(uri, UriKind.Absolute, out _))
-            .When(x => !string.IsNullOrEmpty(x.LinkLattes))
-            .WithMessage("O Link do Lattes deve ser uma URL válida (ex: http://lattes.cnpq.br/...).");
+            .WithMessage("Lattes é obrigatório para professores.");
     }
 }
