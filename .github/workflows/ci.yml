@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-latest  # Roda numa máquina Linux rápida do GitHub
+    runs-on: windows-latest  
 
     steps:
     # 1. Baixa o seu código
@@ -30,6 +30,6 @@ jobs:
     - name: Compilar (Build)
       run: dotnet build --no-restore --configuration Release
 
-    # 5. RODA OS TESTES (O Grande Momento)
+    # 5. RODA OS TESTES
     - name: Rodar Testes
       run: dotnet test --no-build --configuration Release --verbosity normal
