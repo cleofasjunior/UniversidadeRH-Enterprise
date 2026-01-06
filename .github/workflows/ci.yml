@@ -1,0 +1,35 @@
+name: Integração Contínua (.NET 9)
+
+# Quando esse fluxo deve rodar?
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # Roda numa máquina Linux rápida do GitHub
+
+    steps:
+    # 1. Baixa o seu código
+    - name: Checkout do código
+      uses: actions/checkout@v4
+
+    # 2. Instala o .NET 9 na máquina do GitHub
+    - name: Configurar .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    # 3. Baixa os pacotes (Moq, FluentAssertions, etc.)
+    - name: Restaurar dependências
+      run: dotnet restore
+
+    # 4. Compila o projeto para ver se não tem erros de sintaxe
+    - name: Compilar (Build)
+      run: dotnet build --no-restore --configuration Release
+
+    # 5. RODA OS TESTES (O Grande Momento)
+    - name: Rodar Testes
+      run: dotnet test --no-build --configuration Release --verbosity normal

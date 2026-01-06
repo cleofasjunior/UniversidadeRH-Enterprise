@@ -1,0 +1,6 @@
+@UniversidadeRH.API_HostAddress = http://localhost:5114
+
+GET {{UniversidadeRH.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
